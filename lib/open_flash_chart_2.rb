@@ -109,7 +109,7 @@ module OFC2
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@___#{method}", a)
       end
-      define_method("#{method}=") do |a|
+      define_method("_#{method}=") do |a|
         self.instance_variable_set("@___#{method}", a)
       end
     end
@@ -122,15 +122,6 @@ module OFC2
     # o is treat as a logic
     def set_offset( o )
       @offset = o ? true : false
-    end
-    
-    def to_hash
-      self.instance_values
-    end
-    alias :to_h :to_hash
-    
-    def to_json
-      to_hash.to_json
     end
     
     # helper def to make the examples
@@ -249,6 +240,7 @@ module OFC2
       @elements << e
     end
     alias_method :<<, :add_element
+
     def render
       s = to_json
       s = s.gsub('___','')

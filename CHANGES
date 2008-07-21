@@ -1,0 +1,6 @@
+[0.2] beta-1
+  - change README - add description, install section and info about contact
+  - make examples with basic charts
+  - compare plugin with php library and add missing class/methods
+[0.1] alpha
+  - rewrite php library
