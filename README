@@ -13,21 +13,19 @@ plugin is using json
 
 Details
 =====================================
-Go to openflashchart2.sentor.pl for details
+Go to http://openflashchart2.sentor.pl for details
 
 Install plugin
 =====================================
 get only plugin to existing application:
 go to plugins directory
-  cd vendor/plugins
-clone git repo
-  git clone git://github.com/korin/open_flash_chart_2_plugin.git
-go to plugin
-  cd open_flash_chart_2
-copy important files to public directory
-  cp open-flash-chart.swf ../../../public
-  cp swfobject.js ../../../public/javascripts
-  cp -r json ../../../public/javascripts
+    cd vendor/plugins
+clone git repo to open_flash_chart_2 directory
+    git clone git://github.com/korin/open_flash_chart_2_plugin.git open_flash_chart_2
+go to main rails directory
+    cd ../..
+install it using rake command
+    rake open_flash_chart_2:install
 
 Example of usage
 =====================================
@@ -65,9 +63,9 @@ If You have trouble try sample application (info below), or ask on google groups
 Get sample application
 =====================================
 Grab whole sample application:
-go to directory where you want create sample application and run
-  git clone git://github.com/korin/open_flash_chart_2.git
-
+go to directory where you want create sample application
+    git clone git://github.com/korin/open_flash_chart_2.git
+install plugin (instruction is above)
 customize database.yml
 customize what you want ;)
 
@@ -75,6 +73,7 @@ Help
 =====================================
 Looking for help?
 try:
+home page: http://openflashchart2.sentor.pl/infos
 google groups: http://groups.google.com/group/OpenFlashChart2
 or email to me: lisukorin@gmail.com,
   don't forget write 'open flash chart' in subject or my mail client wil treat your message as spam.
