@@ -10,14 +10,47 @@ module OFC2
     end
   end
   def self.included(controller)
-    controller.helper_method(:ofc2)
+    controller.helper_method(:ofc2, :ofc2_inline)
   end
-  def ofc2(width, height, url, base='/', id = '')
+
+  def ofc2_inline(width, height, graph, base='/', id=Time.now.usec)
+    # TODO: generating more than one graph with ofc2_inline on the same page is currently impossible
+    div_name = "flashcontent_#{id}"
     out = []
-    obj_id = 'chart'
-    div_name = 'flashcontent'
-    obj_id   += id
-    div_name += id
+    out << '<div id="' + div_name.to_s + '"></div>'
+
+    out <<  <<-EOF
+    <script type="text/javascript">
+      #{div_name} = '#{graph.render}';
+
+      function open_flash_chart_data(){
+        return #{div_name};
+      };
+
+      // i'm not shure that is necessary
+      function findSWF(movieName) {
+        if (navigator.appName.indexOf("Microsoft")!= -1) {
+          return window[movieName];
+        } else {
+          return document[movieName];
+        }
+      };
+
+      swfobject.embedSWF(
+        '#{base}open-flash-chart.swf', '#{div_name}',
+        '#{width}', '#{height}','9.0.0', 'expressInstall.swf'
+      );
+    </script>
+    EOF
+
+
+    return out.join("\n")
+  end
+
+
+  def ofc2(width, height, url, base='/', id =Time.now.usec)
+    out = []
+    div_name = "flashcontent_#{id}"
     out << '<div id="' + div_name.to_s + '"></div>'
     out << '<script type="text/javascript">'
     out << 'swfobject.embedSWF('

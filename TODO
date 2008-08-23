@@ -1,3 +1,6 @@
+==BUGS==
+  - generating more than one graph with ofc2_inline on the same page is currently impossible
+
 ==Performance==
   - check performance
 ==Clean code==
@@ -5,4 +8,4 @@
 ==Documentation==
   - describe class and methods
   - describe instance variables
-  - present examples code in Charts section
+  --present examples code in Charts section--

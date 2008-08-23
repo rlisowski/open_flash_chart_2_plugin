@@ -1,3 +1,6 @@
+[0.4] beta-3
+  - add ofc2_inline method to generate graph without url
+  - add instance variables getters, changes proposed by __Pavlo Masko__
 [0.3] beta-2
   - changed installation instructions
   - add rake tasks to install/uninstall
