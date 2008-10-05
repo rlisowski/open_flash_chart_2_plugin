@@ -19,7 +19,13 @@ module OFC2
         self.instance_variable_get("@#{method_id.to_s.gsub('_','__')}") # that will be return instance variable value or nil, handy
       else
         #        super # well there is no instance variable and user don't wan't to define any, maybe better return nil?
-        warn("!!! there is no instance variable named #{method_id} !!!")
+        warning = <<-EOF
+          !!! there is no instance variable named #{method_id} !!!
+          - if You want to set instance variable use variable= or set_variable(var) methods
+          - if You want to get variable call object for variable: obj.variable
+          - You can call only for variables You set before
+        EOF
+        warn(warning)
         nil
       end
     end
