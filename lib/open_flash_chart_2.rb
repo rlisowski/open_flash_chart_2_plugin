@@ -8,46 +8,52 @@ module OFC2
     def to_json
       to_hash.to_json
     end
+    def method_missing(method_id, *arguments)
+      a = arguments[0] if arguments and arguments.size > 0
+      method = method_id.to_s
+      if method =~ /^(.*)(=)$/
+        self.instance_variable_set("@#{$1.gsub('_','__')}", a)
+      elsif method =~ /^(set_)(.*)$/
+        self.instance_variable_set("@#{$2.gsub('_','__')}", a)
+      elsif self.instance_variable_defined?(method_id)
+        self.instance_variable_get("@#{method_id.to_s.gsub('_','__')}") # that will be return instance variable value or nil, handy
+      else
+        #        super # well there is no instance variable and user don't wan't to define any, maybe better return nil?
+        warn("!!! there is no instance variable named #{method_id} !!!")
+        nil
+      end
+    end
   end
   def self.included(controller)
     controller.helper_method(:ofc2, :ofc2_inline)
   end
-
   def ofc2_inline(width, height, graph, base='/', id=Time.now.usec)
     # TODO: generating more than one graph with ofc2_inline on the same page is currently impossible
     div_name = "flashcontent_#{id}"
     out = []
     out << '<div id="' + div_name.to_s + '"></div>'
-
     out <<  <<-EOF
-    <script type="text/javascript">
-      #{div_name} = '#{graph.render}';
-
-      function open_flash_chart_data(){
-        return #{div_name};
-      };
-
-      // i'm not shure that is necessary
-      function findSWF(movieName) {
-        if (navigator.appName.indexOf("Microsoft")!= -1) {
-          return window[movieName];
-        } else {
-          return document[movieName];
-        }
-      };
-
-      swfobject.embedSWF(
-        '#{base}open-flash-chart.swf', '#{div_name}',
-        '#{width}', '#{height}','9.0.0', 'expressInstall.swf'
-      );
-    </script>
+<script type="text/javascript">
+#{div_name} = '#{graph.render}';
+function open_flash_chart_data(){
+return #{div_name};
+};
+// i'm not shure that is necessary
+function findSWF(movieName) {
+if (navigator.appName.indexOf("Microsoft")!= -1) {
+return window[movieName];
+} else {
+return document[movieName];
+}
+};
+swfobject.embedSWF(
+'#{base}open-flash-chart.swf', '#{div_name}',
+'#{width}', '#{height}','9.0.0', 'expressInstall.swf'
+);
+</script>
     EOF
-
-
     return out.join("\n")
   end
-
-
   def ofc2(width, height, url, base='/', id =Time.now.usec)
     out = []
     div_name = "flashcontent_#{id}"
@@ -60,24 +66,25 @@ module OFC2
     out << '</script>'
     return out.join("\n")
   end
-
   class Element
     include OWJSON
     def initialize(text = '', css = "{font-size: 20px; color: #FF0F0F; text-align: center;}")
       set_text(text)
       set_style(css)
     end
-    %w(style text).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # insance variables:
+    # style text
+    #    %w(style text).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
   class XLegend <  Element
   end
@@ -85,43 +92,38 @@ module OFC2
   end
   class YLegend <  Element
   end
-
-
-
   # y_axis
   class YAxisBase
     include OWJSON
-    %w(stroke tick_length colour min max steps labels).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
-
+    # instance variables
+    # stroke tick_length colour min max steps labels
+    #    %w(stroke tick_length colour min max steps labels).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     def set_colours( colour, grid_colour )
       set_colour( colour )
       set_grid_colour( grid_colour )
     end
     alias_method :colours=, :set_colours
-
     def set_range( min, max, steps=1 )
       set_min(min)
       set_max(max)
       set_steps( steps )
     end
     alias_method :range=, :set_range
-
     def set_offset( off )
       @offset = off ? 1 : 0
     end
     alias_method :offset=, :set_offset
   end
-
   class YAxis < YAxisBase
     # left axis control grid colour, but right not
     def set_grid_colour(color = '#ff0000')
@@ -129,24 +131,25 @@ module OFC2
     end
     alias_method :grid_colour=, :set_grid_colour
   end
-
   class YAxisRight < YAxisBase
   end
-
   # x_axis
   class XAxis
     include OWJSON
-    %w(stroke tick_length colour tick_height grid_colour min max steps labels offset).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # instance variables
+    # stroke tick_length colour tick_height grid_colour min max steps labels offset
+    #    %w(stroke tick_length colour tick_height grid_colour min max steps labels offset).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
+    # well it must be done this way because instance variable name can't be started by number
     %w(3d).each do |method|
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@___#{method}", a)
@@ -158,25 +161,21 @@ module OFC2
         self.instance_variable_get("@___#{method}")
       end
     end
-
     def set_colours( colour, grid_colour )
       set_colour( colour )
       set_grid_colour( grid_colour )
     end
-
     # o is treat as a logic
     def set_offset( o )
       @offset = o ? true : false
     end
-
-    # helper def to make the examples
+    # helper method to make the examples
     # simpler.
     #
     def set_labels_from_array( a )
       x_axis_labels = XAxisLabels.new
       x_axis_labels.set_labels( a )
       x_axis_labels.set_steps( @steps ) if @steps
-
       @labels = x_axis_labels
     end
     alias_method :labels_from_array=, :set_labels_from_array
@@ -185,7 +184,6 @@ module OFC2
       set_max(max)
     end
   end
-
   class XAxisLabel
     include OWJSON
     def initialize( text, colour, size, rotate, visible )
@@ -195,44 +193,43 @@ module OFC2
       set_rotate( rotate )
       set_visible( visible )
     end
-
-    %w(text colour size rotate visible).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
-
+    # instance variables
+    # text colour size rotate visible
+    #    %w(text colour size rotate visible).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     def set_vertical
       @rotate = "vertical"
     end
     alias_method :vertical, :set_vertical
-
   end
   class XAxisLabels
     include OWJSON
-    %w(steps labels colour size).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
-
+    # instance variables
+    # steps labels colour size
+    #    %w(steps labels colour size).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     def set_vertical()
       @rotate = "vertical"
     end
   end
-
   #scatter
   class ScatterValue
     include OWJSON
@@ -241,19 +238,20 @@ module OFC2
       @y = y
       set_dot_size(dot_size) if dot_size > 0
     end
-    %w(x dot_size y).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # instance variables
+    # x dot_size y
+    #    %w(x dot_size y).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
-
   class Scatter
     include OWJSON
     def initialize( colour, dot_size )
@@ -261,75 +259,70 @@ module OFC2
       set_colour( colour )
       set_dot_size( dot_size )
     end
-
-    %w(colour dot_size values).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # instance variables
+    # colour dot_size values
+    #    %w(colour dot_size values).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
-
-
   class Graph
     include OWJSON
-
-    %w(title x_axis y_axis y_axis_right x_legend y_legend bg_colour elements).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method}")
-      end
-    end
-
+    # instance variables
+    # title x_axis y_axis y_axis_right x_legend y_legend bg_colour elements
+    #    %w(title x_axis y_axis y_axis_right x_legend y_legend bg_colour elements).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method}")
+    #      end
+    #    end
     def initialize
       @title = Title.new( "Graph" )
       @elements = []
     end
-
     def add_element( e )
       @elements << e
     end
     alias_method :<<, :add_element
-
     def render
       s = to_json
       s = s.gsub('___','')
       s.gsub('__','-')
     end
   end
-
-
   # line chart
   class LineBase
     include OWJSON
-
     def initialize(text = 'label text', font_size='10px', values = [9,6,7,9,5,7,6,9,7])
       @type      = "line_dot"
       @text      = text
       @font__size = font_size
       @values    = values
     end
-    %w(values width colour font_size dot_size halo_size text).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # values width colour font_size dot_size halo_size text
+    #    %w(values width colour font_size dot_size halo_size text).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
   class LineDot < LineBase
   end
@@ -345,8 +338,6 @@ module OFC2
       @type      = "line_hollow"
     end
   end
-
-
   #area
   class AreaHollow
     include OWJSON
@@ -355,21 +346,20 @@ module OFC2
       set_fill_alpha  fill_alpha
       @values    = values
     end
-    %w(width color values dot_size text font_size fill_alpha).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # width color values dot_size text font_size fill_alpha
+    #    %w(width color values dot_size text font_size fill_alpha).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
-
   #bar
-
   class BarBase
     include OWJSON
     def initialize (values = [], text = '', size = '10px')
@@ -381,18 +371,18 @@ module OFC2
       @text = text
       @font__size = size
     end
-    %w(alpha colour values text font_size).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
-
+    # alpha colour values text font_size
+    #    %w(alpha colour values text font_size).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     def append_value( v )
       @values << v
     end
@@ -410,18 +400,18 @@ module OFC2
       @colour = color
       @tip = tip
     end
-    %w(top colour tip).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
-
+    #top colour tip
+    #    %w(top colour tip).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     def set_tooltip( tip )
       @tip = tip
     end
@@ -431,14 +421,11 @@ module OFC2
       @type      = "bar_3d"
     end
   end
-
   class BarGlass < BarBase
     def initialize()
       @type      = "bar_glass"
     end
   end
-
-
   class BarSketch < BarBase
     def initialize( colour = '#ff0000', outline_colour = '#00FF00', fun_factor = 5)
       @type      = "bar_sketch"
@@ -446,17 +433,18 @@ module OFC2
       set_outline_colour( outline_colour )
       @offset = fun_factor
     end
-    %w(offset outline_colour).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # offset outline_colour
+    #    %w(offset outline_colour).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
   class BarStack < BarBase
     include OWJSON
@@ -472,36 +460,37 @@ module OFC2
       @val = val
       @colour = colour
     end
-    %w(val color).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # val color
+    #    %w(val color).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
-
   class HBarValue
     include OWJSON
     def initialize( left, right )
       @left = left
       @right = right
     end
-    %w(left right).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # left right
+    #    %w(left right).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
   class HBar
     include OWJSON
@@ -512,24 +501,24 @@ module OFC2
       set_font_size font_size
       @values    = []
     end
-    %w(colour text font_size values).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # colour text font_size values
+    #    %w(colour text font_size values).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
     # v suppostu be HBarValue class
     def append_value( v )
       @values << v
     end
     alias_method :<<, :append_value
   end
-
   ########## pie
   class PieValue
     include OWJSON
@@ -538,7 +527,6 @@ module OFC2
       @text = text
     end
   end
-
   class Pie
     include OWJSON
     def initialize(colours = ["#d01f3c","#356aa0","#C79810"], alpha = 0.6, border = 2, values = [2,3, PieValue.new(6.5, "hello (6.5)")])
@@ -548,16 +536,17 @@ module OFC2
       @border			= border
       @values			= values
     end
-    %w(colours alpha border values animate start_angle).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}=") do |a|
-        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@#{method.gsub('_','__')}")
-      end
-    end
+    # colours alpha border values animate start_angle
+    #    %w(colours alpha border values animate start_angle).each do |method|
+    #      define_method("set_#{method}") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}=") do |a|
+    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
+    #      end
+    #      define_method("#{method}") do
+    #        self.instance_variable_get("@#{method.gsub('_','__')}")
+    #      end
+    #    end
   end
 end
