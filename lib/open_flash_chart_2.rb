@@ -89,12 +89,13 @@ module OFC2
     EOF
   end
 
-=begin
-  insance variables:
-  +style+ :style for element, it's is in css style eg. "{font-size: 20px; color: #FF0F0F; text-align: center;}"
-  +text+ :text for element
-=end
+  # insance variables:
+  #
+  # +style+ style for element, it's is in css style eg. "{font-size: 20px; color: #FF0F0F; text-align: center;}"
+  #
+  # +text+ text for element
   class Element
+
     include OWJSON
     def initialize(text = '', css = "{font-size: 20px; color: #FF0F0F; text-align: center;}")
       set_text(text)
@@ -102,35 +103,32 @@ module OFC2
     end
   end
 
-=begin
-  documentation is the same as Element class
-=end
+
+  # documentation is the same as Element class
   class XLegend <  Element ;end
-=begin
-  documentation is the same as Element class
-=end
+
+  # documentation is the same as Element class
   class Title < Element ;end
-=begin
-  documentation is the same as Element class
-=end
+
+  # documentation is the same as Element class
   class YLegend <  Element ;end
 
 
-=begin
-  y_axis
-  +stroke+
-  +tick_length+
-  +colour+
-  +min+
-  +max+
-  +steps+
-  +labels+
-=end
+  # y_axis
+  #
+  # +stroke+
+  # +tick_length+
+  # +colour+
+  # +min+
+  # +max+
+  # +steps+
+  # +labels+
   class YAxisBase
     include OWJSON
 
     # set colour and grid_colour at once
     # there is also an alias colours=
+    #
     # +colour+ colour for labels eg. #FF0000
     # +grid_colour+ colour for grid eg. #00FF00
     def set_colours( colour, grid_colour )
@@ -142,6 +140,7 @@ module OFC2
 
     # set range at once
     # there is also an alias range=
+    #
     # +min+ minimum for y_axis
     # +max+ maximum for y_axis
     # +steps+ how many steps skip before print label
@@ -160,6 +159,7 @@ module OFC2
     alias_method :offset=, :set_offset
 
   end
+
   class YAxis < YAxisBase
     # left axis control grid colour, but right not
     def set_grid_colour(color = '#ff0000')
@@ -170,19 +170,18 @@ module OFC2
   class YAxisRight < YAxisBase
   end
 
-=begin
-  x_axis
-  +stroke+
-  +tick_length+
-  +colour+
-  +tick_height+
-  +grid_colour+
-  +min+
-  +max+
-  +steps+
-  +labels+
-  +offset+
-=end
+  # x_axis
+  #
+  # +stroke+
+  # +tick_length+
+  # +colour+
+  # +tick_height+
+  # +grid_colour+
+  # +min+
+  # +max+
+  # +steps+
+  # +labels+
+  # +offset+
   class XAxis
     include OWJSON
 
@@ -222,6 +221,12 @@ module OFC2
       set_max(max)
     end
   end
+
+  # +text+
+  # +colour+
+  # +size+
+  # +rotate+
+  # +visible+
   class XAxisLabel
     include OWJSON
     def initialize( text, colour, size, rotate, visible )
@@ -231,44 +236,28 @@ module OFC2
       set_rotate( rotate )
       set_visible( visible )
     end
-    # instance variables
-    # text colour size rotate visible
-    #    %w(text colour size rotate visible).each do |method|
-    #      define_method("set_#{method}") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}=") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}") do
-    #        self.instance_variable_get("@#{method.gsub('_','__')}")
-    #      end
-    #    end
     def set_vertical
       @rotate = "vertical"
     end
     alias_method :vertical, :set_vertical
   end
+
+  # +steps+
+  # +labels+
+  # +colour+
+  # +size+
   class XAxisLabels
     include OWJSON
-    # instance variables
-    # steps labels colour size
-    #    %w(steps labels colour size).each do |method|
-    #      define_method("set_#{method}") do |a|
-    #        self.instance_variable_set("@#{method}", a)
-    #      end
-    #      define_method("#{method}=") do |a|
-    #        self.instance_variable_set("@#{method}", a)
-    #      end
-    #      define_method("#{method}") do
-    #        self.instance_variable_get("@#{method.gsub('_','__')}")
-    #      end
-    #    end
     def set_vertical()
       @rotate = "vertical"
     end
   end
-  #scatter
+
+  # scatter value
+  #
+  # +x+
+  # +dot_size+
+  # +y+
   class ScatterValue
     include OWJSON
     def initialize( x, y, dot_size=-1 )
@@ -276,20 +265,11 @@ module OFC2
       @y = y
       set_dot_size(dot_size) if dot_size > 0
     end
-    # instance variables
-    # x dot_size y
-    #    %w(x dot_size y).each do |method|
-    #      define_method("set_#{method}") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}=") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}") do
-    #        self.instance_variable_get("@#{method.gsub('_','__')}")
-    #      end
-    #    end
   end
+
+  # +colour+
+  # +dot_size+
+  # +values+
   class Scatter
     include OWJSON
     def initialize( colour, dot_size )
@@ -297,36 +277,22 @@ module OFC2
       set_colour( colour )
       set_dot_size( dot_size )
     end
-    # instance variables
-    # colour dot_size values
-    #    %w(colour dot_size values).each do |method|
-    #      define_method("set_#{method}") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}=") do |a|
-    #        self.instance_variable_set("@#{method.gsub('_','__')}", a)
-    #      end
-    #      define_method("#{method}") do
-    #        self.instance_variable_get("@#{method.gsub('_','__')}")
-    #      end
-    #    end
   end
 
 
-=begin
-  +title+
-  +x_axis+
-  +y_axis+
-  +y_axis_right+
-  +x_legend+
-  +y_legend+
-  +bg_colour+
-  +elements+
-=end
+
+  # +title+
+  # +x_axis+
+  # +y_axis+
+  # +y_axis_right+
+  # +x_legend+
+  # +y_legend+
+  # +bg_colour+
+  # +elements+
   class Graph
     include OWJSON
 
-    # it must be done in that way because method_miising method replace _ to __
+    # it must be done in that way because method_missing method replace _ to __, maybe I add seccond parameter to handle with that
     %w(x_axis y_axis y_axis_right x_legend y_legend bg_colour).each do |method|
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@#{method}", a)
@@ -354,21 +320,20 @@ module OFC2
       # everything about underscores
       s.gsub!('___','') # that is for @___3d variable
       s.gsub!('__','-') # that is for @smt__smt variables
-      # variables @smt_smt should look without changes
+      # variables @smt_smt should go without changes
       s
     end
   end
 
-=begin
-  line chart
-  +values+
-  +width+
-  +colour+
-  +font_size+
-  +dot_size+
-  +halo_size+
-  +text+
-=end
+  # line chart
+  #
+  # +values+
+  # +width+
+  # +colour+
+  # +font_size+
+  # +dot_size+
+  # +halo_size+
+  # +text+
   class LineBase
     include OWJSON
     def initialize(text = 'label text', font_size='10px', values = [9,6,7,9,5,7,6,9,7])
@@ -379,14 +344,10 @@ module OFC2
     end
   end
 
-=begin
-  go to class LineBase for details
-=end
+  # go to class LineBase for details
   class LineDot < LineBase ;end
 
-=begin
-  go to class LineBase for details
-=end
+  # go to class LineBase for details
   class Line < LineBase
     def initialize
       super
@@ -394,9 +355,7 @@ module OFC2
     end
   end
 
-=begin
-  go to class LineBase for details
-=end
+  # go to class LineBase for details
   class LineHollow < LineBase
     def initialize
       super
@@ -404,15 +363,13 @@ module OFC2
     end
   end
 
-=begin
-  +width+
-  +color+
-  +values+
-  +dot_size+
-  +text+
-  +font_size+
-  +fill_alpha+
-=end
+  # +width+
+  # +color+
+  # +values+
+  # +dot_size+
+  # +text+
+  # +font_size+
+  # +fill_alpha+
   class AreaHollow
     include OWJSON
     def initialize(fill_alpha = 0.35, values = [])
@@ -422,13 +379,11 @@ module OFC2
     end
   end
 
-=begin
-  +alpha+
-  +colour+
-  +values+
-  +text+
-  +font_size+
-=end
+  # +alpha+
+  # +colour+
+  # +values+
+  # +text+
+  # +font_size+
   class BarBase
     include OWJSON
     def initialize (values = [], text = '', size = '10px')
@@ -446,20 +401,16 @@ module OFC2
     alias_method :<<, :append_value
   end
 
-=begin
-  go to class BarBase for details
-=end
+  # go to class BarBase for details
   class Bar < BarBase
     def initialize
       @type      = "bar"
     end
   end
 
-=begin
-  +top+
-  +colour+
-  +tip+
-=end
+  # +top+
+  # +colour+
+  # +tip+
   class Value
     include OWJSON
     def initialize(top = 0, color = '', tip = nil)
@@ -477,21 +428,18 @@ module OFC2
     end
   end
 
-=begin
- go to class BarBase documentation for details
-=end
+  # go to class BarBase documentation for details
   class BarGlass < BarBase
     def initialize()
       @type      = "bar_glass"
     end
   end
 
-=begin
- go to class BarBase documentation for details
-  +offset+
-  +colour+
-  +outline_colour+
-=end
+  # go to class BarBase documentation for details
+  #
+  # +offset+
+  # +colour+
+  # +outline_colour+
   class BarSketch < BarBase
     def initialize( colour = '#ff0000', outline_colour = '#00FF00', fun_factor = 5)
       @type      = "bar_sketch"
@@ -501,9 +449,7 @@ module OFC2
     end
   end
 
-=begin
- go to class BarBase documentation for details
-=end
+  # go to class BarBase documentation for details
   class BarStack < BarBase
     include OWJSON
     def initialize
@@ -513,11 +459,10 @@ module OFC2
     alias_method :append_stack, :append_value
   end
 
-=begin
- go to class Value documentation for details
-  +val+
-  +color+
-=end
+  # go to class Value documentation for details
+  #
+  # +val+
+  # +color+
   class BarStackValue < Value
     include OWJSON
     def initialize(val, colour)
@@ -526,10 +471,8 @@ module OFC2
     end
   end
 
-=begin
-  +left+
-  +right+
-=end
+  # +left+
+  # +right+
   class HBarValue
     include OWJSON
     def initialize( left, right )
@@ -538,12 +481,10 @@ module OFC2
     end
   end
 
-=begin
-  +colour+
-  +text+
-  +font_size+
-  +values+
-=end
+  # +colour+
+  # +text+
+  # +font_size+
+  # +values+
   class HBar
     include OWJSON
     def initialize(colour = "#9933CC", text = '', font_size = '10px')
@@ -561,7 +502,9 @@ module OFC2
     alias_method :<<, :append_value
   end
 
-  ########## pie
+  # pie value
+  # +value+
+  # +text+
   class PieValue
     include OWJSON
     def initialize( value, text )
@@ -570,14 +513,12 @@ module OFC2
     end
   end
 
-=begin
-  +colours+
-  +alpha+
-  +border+
-  +values+
-  +animate+
-  +start_angle+
-=end
+  # +colours+
+  # +alpha+
+  # +border+
+  # +values+
+  # +animate+
+  # +start_angle+
   class Pie
     include OWJSON
     def initialize(colours = ["#d01f3c","#356aa0","#C79810"], alpha = 0.6, border = 2, values = [2,3, PieValue.new(6.5, "hello (6.5)")])
