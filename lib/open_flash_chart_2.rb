@@ -1,10 +1,14 @@
 require 'json'
 module OFC2
+  # specjal module included in each class
+  # with that module we add to_hash and to_json methods
+  # there is also a method_missing which allow user to set/get any instance variable
+  # if user try to get not setted instance variable it return nil and generate a warn
   module OWJSON
     def to_hash
       self.instance_values
     end
-    alias :to_h :to_hash
+    alias :to_h :to_hashsg
     def to_json
       to_hash.to_json
     end
@@ -18,8 +22,9 @@ module OFC2
       elsif self.instance_variable_defined?(method_id)
         self.instance_variable_get("@#{method_id.to_s.gsub('_','__')}") # that will be return instance variable value or nil, handy
       else
-        #        super # well there is no instance variable and user don't wan't to define any, maybe better return nil?
-        warning = <<-EOF
+        #        well there is no instance variable and user don't wan't to define any
+        #         maybe better return nil and warn that rise exception(call super) ?
+        warning = <<-EOFg
           !!! there is no instance variable named #{method_id} !!!
           - if You want to set instance variable use variable= or set_variable(var) methods
           - if You want to get variable call object for variable: obj.variable
@@ -36,11 +41,11 @@ module OFC2
   end
 
   # generate a ofc object using Graph object
-  # +width+ width for div
-  # +height+ height for div
-  # +graph+ a OFC2::Graph object
-  # +base+ uri for graph, default '/'
-  # +id+ id for div with graph, default Time.now.usec
+  #  +width+ width for div
+  #  +height+ height for div
+  #  +graph+ a OFC2::Graph object
+  #  +base+ uri for graph, default '/'
+  #  +id+ id for div with graph, default Time.now.usec
   def ofc2_inline(width, height, graph, base='/', id=Time.now.usec)
     # TODO: generating more than one graph with ofc2_inline on the same page is currently impossible
     div_name = "flashcontent_#{id}"
@@ -71,11 +76,11 @@ module OFC2
   end
 
   # generate a ofc object using data from url
-  # +width+ width for div
-  # +height+ height for div
-  # +url+ an url which return data in json format
-  # +base+ uri for graph, default '/'
-  # +id+ id for div with graph, default Time.now.usec
+  #  +width+ width for div
+  #  +height+ height for div
+  #  +url+ an url which return data in json format
+  #  +base+ uri for graph, default '/'
+  #  +id+ id for div with graph, default Time.now.usec
   def ofc2(width, height, url, base='/', id =Time.now.usec)
     div_name = "flashcontent_#{id}"
     <<-EOF
@@ -91,46 +96,43 @@ module OFC2
 
   # insance variables:
   #
-  # +style+ style for element, it's is in css style eg. "{font-size: 20px; color: #FF0F0F; text-align: center;}"
-  #
-  # +text+ text for element
+  #  +style+ style for element, it's is in css style eg. "{font-size: 20px; color: #FF0F0F; text-align: center;}"
+  #  +text+ text for element
   class Element
-
     include OWJSON
+    # You can initialize Elemnt while creating it, otherwise it will be have default valiues
+    #  +text+ = ''
+    #  +css+ = "{font-size: 20px; color: #FF0F0F; text-align: center;}"
     def initialize(text = '', css = "{font-size: 20px; color: #FF0F0F; text-align: center;}")
       set_text(text)
       set_style(css)
     end
   end
 
-
   # documentation is the same as Element class
   class XLegend <  Element ;end
-
   # documentation is the same as Element class
   class Title < Element ;end
-
   # documentation is the same as Element class
   class YLegend <  Element ;end
 
-
-  # y_axis
+  # YAxisBase
   #
-  # +stroke+
-  # +tick_length+
-  # +colour+
-  # +min+
-  # +max+
-  # +steps+
-  # +labels+
+  #  +stroke+
+  #  +tick_length+
+  #  +colour+
+  #  +min+
+  #  +max+
+  #  +steps+
+  #  +labels+
   class YAxisBase
     include OWJSON
 
     # set colour and grid_colour at once
     # there is also an alias colours=
     #
-    # +colour+ colour for labels eg. #FF0000
-    # +grid_colour+ colour for grid eg. #00FF00
+    #  +colour+ colour for labels eg. #FF0000
+    #  +grid_colour+ colour for grid eg. #00FF00
     def set_colours( colour, grid_colour )
       set_colour( colour )
       set_grid_colour( grid_colour )
@@ -141,9 +143,9 @@ module OFC2
     # set range at once
     # there is also an alias range=
     #
-    # +min+ minimum for y_axis
-    # +max+ maximum for y_axis
-    # +steps+ how many steps skip before print label
+    #  +min+ minimum for y_axis
+    #  +max+ maximum for y_axis
+    #  +steps+ how many steps skip before print label
     def set_range( min, max, steps=1 )
       set_min(min)
       set_max(max)
@@ -172,16 +174,16 @@ module OFC2
 
   # x_axis
   #
-  # +stroke+
-  # +tick_length+
-  # +colour+
-  # +tick_height+
-  # +grid_colour+
-  # +min+
-  # +max+
-  # +steps+
-  # +labels+
-  # +offset+
+  #  +stroke+
+  #  +tick_length+
+  #  +colour+
+  #  +tick_height+
+  #  +grid_colour+
+  #  +min+
+  #  +max+
+  #  +steps+
+  #  +labels+
+  #  +offset+
   class XAxis
     include OWJSON
 
@@ -197,6 +199,7 @@ module OFC2
         self.instance_variable_get("@___#{method}")
       end
     end
+    # set +colour+ and +grid_colour+, use a css color style '#ff00ff'
     def set_colours( colour, grid_colour )
       set_colour( colour )
       set_grid_colour( grid_colour )
@@ -206,9 +209,8 @@ module OFC2
     def set_offset( o )
       @offset = o ? true : false
     end
-    # helper method to make the examples
-    # simpler.
-    #
+
+    # helper method to make the examples simpler.
     def set_labels_from_array( a )
       x_axis_labels = XAxisLabels.new
       x_axis_labels.set_labels( a )
@@ -222,11 +224,11 @@ module OFC2
     end
   end
 
-  # +text+
-  # +colour+
-  # +size+
-  # +rotate+
-  # +visible+
+  #  +text+
+  #  +colour+
+  #  +size+
+  #  +rotate+
+  #  +visible+
   class XAxisLabel
     include OWJSON
     def initialize( text, colour, size, rotate, visible )
@@ -242,10 +244,10 @@ module OFC2
     alias_method :vertical, :set_vertical
   end
 
-  # +steps+
-  # +labels+
-  # +colour+
-  # +size+
+  #  +steps+
+  #  +labels+
+  #  +colour+
+  #  +size+
   class XAxisLabels
     include OWJSON
     def set_vertical()
@@ -255,9 +257,9 @@ module OFC2
 
   # scatter value
   #
-  # +x+
-  # +dot_size+
-  # +y+
+  #  +x+
+  #  +dot_size+
+  #  +y+
   class ScatterValue
     include OWJSON
     def initialize( x, y, dot_size=-1 )
@@ -267,9 +269,9 @@ module OFC2
     end
   end
 
-  # +colour+
-  # +dot_size+
-  # +values+
+  #  +colour+
+  #  +dot_size+
+  #  +values+
   class Scatter
     include OWJSON
     def initialize( colour, dot_size )
@@ -281,18 +283,19 @@ module OFC2
 
 
 
-  # +title+
-  # +x_axis+
-  # +y_axis+
-  # +y_axis_right+
-  # +x_legend+
-  # +y_legend+
-  # +bg_colour+
-  # +elements+
+  #  +title+
+  #  +x_axis+
+  #  +y_axis+
+  #  +y_axis_right+
+  #  +x_legend+
+  #  +y_legend+
+  #  +bg_colour+
+  #  +elements+
   class Graph
     include OWJSON
 
-    # it must be done in that way because method_missing method replace _ to __, maybe I add seccond parameter to handle with that
+    # it must be done in that way because method_missing method replace _ to __,
+    # maybe I add seccond parameter to handle with that
     %w(x_axis y_axis y_axis_right x_legend y_legend bg_colour).each do |method|
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@#{method}", a)
@@ -327,13 +330,13 @@ module OFC2
 
   # line chart
   #
-  # +values+
-  # +width+
-  # +colour+
-  # +font_size+
-  # +dot_size+
-  # +halo_size+
-  # +text+
+  #  +values+
+  #  +width+
+  #  +colour+
+  #  +font_size+
+  #  +dot_size+
+  #  +halo_size+
+  #  +text+
   class LineBase
     include OWJSON
     def initialize(text = 'label text', font_size='10px', values = [9,6,7,9,5,7,6,9,7])
@@ -363,13 +366,13 @@ module OFC2
     end
   end
 
-  # +width+
-  # +color+
-  # +values+
-  # +dot_size+
-  # +text+
-  # +font_size+
-  # +fill_alpha+
+  #  +width+
+  #  +color+
+  #  +values+
+  #  +dot_size+
+  #  +text+
+  #  +font_size+
+  #  +fill_alpha+
   class AreaHollow
     include OWJSON
     def initialize(fill_alpha = 0.35, values = [])
@@ -379,11 +382,11 @@ module OFC2
     end
   end
 
-  # +alpha+
-  # +colour+
-  # +values+
-  # +text+
-  # +font_size+
+  #  +alpha+
+  #  +colour+
+  #  +values+
+  #  +text+
+  #  +font_size+
   class BarBase
     include OWJSON
     def initialize (values = [], text = '', size = '10px')
@@ -408,9 +411,9 @@ module OFC2
     end
   end
 
-  # +top+
-  # +colour+
-  # +tip+
+  #  +top+
+  #  +colour+
+  #  +tip+
   class Value
     include OWJSON
     def initialize(top = 0, color = '', tip = nil)
@@ -437,9 +440,9 @@ module OFC2
 
   # go to class BarBase documentation for details
   #
-  # +offset+
-  # +colour+
-  # +outline_colour+
+  #  +offset+
+  #  +colour+
+  #  +outline_colour+
   class BarSketch < BarBase
     def initialize( colour = '#ff0000', outline_colour = '#00FF00', fun_factor = 5)
       @type      = "bar_sketch"
@@ -461,8 +464,8 @@ module OFC2
 
   # go to class Value documentation for details
   #
-  # +val+
-  # +color+
+  #  +val+
+  #  +color+
   class BarStackValue < Value
     include OWJSON
     def initialize(val, colour)
@@ -471,8 +474,8 @@ module OFC2
     end
   end
 
-  # +left+
-  # +right+
+  #  +left+
+  #  +right+
   class HBarValue
     include OWJSON
     def initialize( left, right )
@@ -481,10 +484,10 @@ module OFC2
     end
   end
 
-  # +colour+
-  # +text+
-  # +font_size+
-  # +values+
+  #  +colour+
+  #  +text+
+  #  +font_size+
+  #  +values+
   class HBar
     include OWJSON
     def initialize(colour = "#9933CC", text = '', font_size = '10px')
@@ -503,8 +506,8 @@ module OFC2
   end
 
   # pie value
-  # +value+
-  # +text+
+  #  +value+
+  #  +text+
   class PieValue
     include OWJSON
     def initialize( value, text )
@@ -513,15 +516,20 @@ module OFC2
     end
   end
 
-  # +colours+
-  # +alpha+
-  # +border+
-  # +values+
-  # +animate+
-  # +start_angle+
+
+  #  +colours+
+  #  +alpha+
+  #  +border+
+  #  +values+
+  #  +animate+
+  #  +start_angle+
   class Pie
     include OWJSON
-    def initialize(colours = ["#d01f3c","#356aa0","#C79810"], alpha = 0.6, border = 2, values = [2,3, PieValue.new(6.5, "hello (6.5)")])
+    def initialize(colours = ["#d01f3c","#356aa0","#C79810"],
+        alpha = 0.6,
+        border = 2,
+        values = [2,3, PieValue.new(6.5, "hello (6.5)")]
+      )
       @type     = 'pie'
       @colours  = colours
       @alpha	= alpha
