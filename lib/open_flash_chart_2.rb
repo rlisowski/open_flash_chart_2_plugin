@@ -52,10 +52,9 @@ module OFC2
     <<-EOF
       <div id="#{div_name}"></div>
       <script type="text/javascript">
-        #{div_name} = '#{graph.render}';
 
         function open_flash_chart_data(){
-          return #{div_name};
+          return '#{graph.render}';
         };
 
         // i'm not shure that is necessary
