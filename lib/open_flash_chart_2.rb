@@ -8,7 +8,7 @@ module OFC2
     def to_hash
       self.instance_values
     end
-    alias :to_h :to_hashsg
+    alias :to_h :to_hash
     def to_json
       to_hash.to_json
     end
@@ -24,7 +24,7 @@ module OFC2
       else
         #        well there is no instance variable and user don't wan't to define any
         #         maybe better return nil and warn that rise exception(call super) ?
-        warning = <<-EOFg
+        warning = <<-EOF
           !!! there is no instance variable named #{method_id} !!!
           - if You want to set instance variable use variable= or set_variable(var) methods
           - if You want to get variable call object for variable: obj.variable
@@ -394,7 +394,7 @@ module OFC2
       @text = text
       @font__size = size
     end
-    def set_key( text, size )s
+    def set_key( text, size )
       @text = text
       @font__size = size
     end
