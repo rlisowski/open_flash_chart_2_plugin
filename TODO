@@ -1,10 +1,12 @@
 ==BUGS==
-  - generating more than one graph with ofc2_inline on the same page is currently impossible
+  --generating more than one graph with ofc2_inline on the same page is currently impossible--
 
-==Performance==
-  - check performance
-==Clean code==
-  - make code cleaner and smaller
+==Futures==
+  - add radar charts
+  - add tooltip class
+  --add DotValue class--
+  --many inline chart on one page--
+
 ==Documentation==
   - describe class and methods
   - describe instance variables

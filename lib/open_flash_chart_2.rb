@@ -53,7 +53,7 @@ module OFC2
       <div id="#{div_name}"></div>
       <script type="text/javascript">
 
-        function open_flash_chart_data(){
+        function #{div_name}_data(){
           return '#{graph.render}';
         };
 
@@ -68,8 +68,9 @@ module OFC2
 
         swfobject.embedSWF(
           '#{base}open-flash-chart.swf', '#{div_name}',
-          '#{width}', '#{height}','9.0.0', 'expressInstall.swf'
-        );
+          '#{width}', '#{height}','9.0.0', 'expressInstall.swf',
+          {'get-data':'#{div_name}_data'} );
+
       </script>
     EOF
   end
@@ -346,6 +347,19 @@ module OFC2
     end
   end
 
+
+  #  +value+
+  #  +colour+
+  #  +tip+
+  #  +size+
+  class DotValue
+    include OWJSON
+    def initialize(value = 0, colour = '', tip = nil)
+      @value = value
+      @colour = colour
+      @tip = tip if tip
+    end
+  end
   # go to class LineBase for details
   class LineDot < LineBase ;end
 
@@ -418,9 +432,6 @@ module OFC2
     def initialize(top = 0, color = '', tip = nil)
       @top = top
       @colour = color
-      @tip = tip
-    end
-    def set_tooltip( tip )
       @tip = tip
     end
   end
