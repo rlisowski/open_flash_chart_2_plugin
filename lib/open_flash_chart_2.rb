@@ -207,7 +207,7 @@ module OFC2
 
     # o is treat as a logic
     def set_offset( o )
-      @offset = o ? true : false
+      @offset = !!o
     end
 
     # helper method to make the examples simpler.
