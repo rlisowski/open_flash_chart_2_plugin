@@ -10,7 +10,7 @@ namespace :open_flash_chart_2 do
   end
   desc 'Removes the swf and javascripts for the plugin.'
   task :uninstall do
-    FileUtils.rm "#{RAILS_ROOT}/public/javascripts/swfobject.js"
-    FileUtils.rm "#{RAILS_ROOT}/public/open-flash-chart.swf"
+    FileUtils.rm "#{RAILS_ROOT}/public/javascripts/swfobject.js", :force => true, :verbose => true
+    FileUtils.rm "#{RAILS_ROOT}/public/open-flash-chart.swf", :force => true, :verbose => true
   end
 end
