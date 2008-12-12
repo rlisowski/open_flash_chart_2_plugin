@@ -1,3 +1,6 @@
+[0.7] rc-1 : 12.12.2008
+  - add Tooltip class, example is here:
+     http://openflashchart2.sentor.pl/chart_examples/mix_advanced_tooltip
 [0.6] rc-1 : 11.12.2008
   - now generating many inline chart on one page is possible
   - moved to open-flash-chart-2-hyperion version
