@@ -547,4 +547,33 @@ module OFC2
       @values	= values
     end
   end
+
+
+  # +shadow+
+  # +stroke+
+  # +colour+ text colour
+  # +background+ background colour
+  # +title+ title style
+  # +body+ body style
+  class Tooltip
+    include OWJSON
+
+    def set_title_style( style = '')
+      @title = style
+    end
+
+    def set_body_style( style = '')
+      @body = style
+    end
+
+    def set_proximity
+      @mouse = 1
+    end
+    alias_method :proximity, :set_proximity
+
+    def set_hover
+      @mouse = 2
+    end
+    alias_method :hover, :set_hover
+  end
 end
