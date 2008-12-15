@@ -104,8 +104,8 @@ module OFC2
     #  +text+ = ''
     #  +css+ = "{font-size: 20px; color: #FF0F0F; text-align: center;}"
     def initialize(text = '', css = "{font-size: 20px; color: #FF0F0F; text-align: center;}")
-      set_text(text)
-      set_style(css)
+      @text= text
+      @style= css
     end
   end
 
@@ -163,11 +163,11 @@ module OFC2
   end
 
   class YAxis < YAxisBase
-    # left axis control grid colour, but right not
-    def set_grid_colour(color = '#ff0000')
-      @grid__colour = color
-    end
-    alias_method :grid_colour=, :set_grid_colour
+    #    # left axis control grid colour, but right not
+    #    def set_grid_colour(color = '#ff0000')
+    #      @grid__colour = color
+    #    end
+    #    alias_method :grid_colour=, :set_grid_colour
   end
   class YAxisRight < YAxisBase
   end
@@ -201,8 +201,8 @@ module OFC2
     end
     # set +colour+ and +grid_colour+, use a css color style '#ff00ff'
     def set_colours( colour, grid_colour )
-      set_colour( colour )
-      set_grid_colour( grid_colour )
+      @colour= colour
+      @grid_colour= grid_colour
     end
 
     # o is treat as a logic
@@ -219,8 +219,8 @@ module OFC2
     end
     alias_method :labels_from_array=, :set_labels_from_array
     def set_range( min, max )
-      set_min(min)
-      set_max(max)
+      @min=min
+      @max=max
     end
   end
 
@@ -231,17 +231,20 @@ module OFC2
   #  +visible+
   class XAxisLabel
     include OWJSON
-    def initialize( text, colour, size, rotate, visible )
-      set_text( text )
-      set_colour( colour )
-      set_size( size )
-      set_rotate( rotate )
-      set_visible( visible )
+    def initialize( text = nil, colour = nil, size= nil)
+      @text= text if text
+      @colour= colour if colour
+      @size= size if size
     end
     def set_vertical
       @rotate = "vertical"
     end
     alias_method :vertical, :set_vertical
+
+    def set_horizontal
+      @rotate = "horizontal"
+    end
+    alias_method :horizontal, :set_horizontal
   end
 
   #  +steps+
