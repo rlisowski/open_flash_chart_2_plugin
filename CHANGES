@@ -2,7 +2,7 @@
   - add shape drawning support, example is here:
      http://openflashchart2.sentor.pl/chart_examples/mix_advanced_draw_shape
   - add stacked bar keys support:
-     http://openflashchart2.sentor.pl/chart_examples/mix_advanced_draw_shape
+     http://openflashchart2.sentor.pl/chart_examples/stacked_bar
   - pseudo horizontal stacked bar, example:
      http://openflashchart2.sentor.pl/chart_examples/mix_advanced_shapes
 [0.7] rc-1 : 12.12.2008
