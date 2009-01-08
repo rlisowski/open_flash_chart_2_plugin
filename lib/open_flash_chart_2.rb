@@ -342,11 +342,12 @@ module OFC2
   #  +text+
   class LineBase
     include OWJSON
-    def initialize(text = 'label text', font_size='10px', values = [9,6,7,9,5,7,6,9,7])
+    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#0000FFs')
       @type      = "line_dot"
       @text      = text
       @font__size = font_size
       @values    = values
+      @colour    = colour
     end
   end
 
@@ -368,7 +369,7 @@ module OFC2
 
   # go to class LineBase for details
   class Line < LineBase
-    def initialize
+    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#00FF00')
       super
       @type      = "line"
     end
@@ -376,7 +377,7 @@ module OFC2
 
   # go to class LineBase for details
   class LineHollow < LineBase
-    def initialize
+    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#FF0000')
       super
       @type      = "line_hollow"
     end
@@ -405,7 +406,7 @@ module OFC2
   #  +font_size+
   class BarBase
     include OWJSON
-    def initialize (values = [], text = '', size = '10px')
+    def initialize(values = [], text = '', size = 10)
       @values = values
       @text = text
       @font__size = size
@@ -422,7 +423,8 @@ module OFC2
 
   # go to class BarBase for details
   class Bar < BarBase
-    def initialize
+    def initialize(values = [], text = '', size = 10)
+      super
       @type      = "bar"
     end
   end
@@ -439,14 +441,16 @@ module OFC2
     end
   end
   class Bar3d < BarBase
-    def initialize()
+    def initialize(values = [], text = '', size = 10)
+      super
       @type      = "bar_3d"
     end
   end
 
   # go to class BarBase documentation for details
   class BarGlass < BarBase
-    def initialize()
+    def initialize(values = [], text = '', size = 10)
+      super
       @type      = "bar_glass"
     end
   end
@@ -466,19 +470,36 @@ module OFC2
   end
 
   # go to class BarBase documentation for details
+  # +keys+
   class BarStack < BarBase
     include OWJSON
-    def initialize
-      super
+    def initialize(values = [], text = '', size = 10, keys = [])
+      super(values, text, size)
       @type      = "bar_stack"
+      @keys      = keys
+    end
+
+    def append_key( key )
+      @keys << key
+    end
+
+    def set_keys( keys )
+      @keys = keys
+    end
+    alias_method :keys=, :set_keys
+
+
+    def append_value( v )
+      @values << v
     end
     alias_method :append_stack, :append_value
+    alias_method :<<, :append_value
   end
 
   # go to class Value documentation for details
   #
   #  +val+
-  #  +color+
+  #  +colour+
   class BarStackValue < Value
     include OWJSON
     def initialize(val, colour)
@@ -487,13 +508,27 @@ module OFC2
     end
   end
 
+  #  +colour+
+  #  +text+
+  #  +font_size+
+  class BarStackKey
+    include OWJSON
+    def initialize( colour, text, font_size )
+      @colour = colour
+      @text = text
+      @font__size = font_size
+    end
+  end
+
+
   #  +left+
   #  +right+
   class HBarValue
     include OWJSON
-    def initialize( left, right )
+    def initialize( left = 0, right = 0, tip = nil )
       @left = left
       @right = right
+      @tip = tip if tip
     end
   end
 
@@ -503,7 +538,7 @@ module OFC2
   #  +values+
   class HBar
     include OWJSON
-    def initialize(colour = "#9933CC", text = '', font_size = '10px')
+    def initialize(colour = "#9933CC", text = '', font_size = 10)
       @type      = "hbar"
       @colour    = colour
       @text      = text
@@ -516,6 +551,7 @@ module OFC2
       @values << v
     end
     alias_method :<<, :append_value
+
   end
 
   # pie value
@@ -579,4 +615,31 @@ module OFC2
     end
     alias_method :hover, :set_hover
   end
+
+
+  class ShapePoint
+    include OWJSON
+
+    def initialize( x, y )
+      @x = x
+      @y = y
+    end
+  end
+
+  class Shape
+    include OWJSON
+    def initialize( colour = '', values = [] )
+      @type		= "shape"
+      @colour	= colour
+      @values	= values
+    end
+
+    def append_value( p )
+      @values << p
+    end
+    alias_method :<<, :append_value
+    alias_method :add_element, :append_value
+
+  end
+
 end
