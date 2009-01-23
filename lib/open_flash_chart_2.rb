@@ -46,7 +46,7 @@ module OFC2
   #  +graph+ a OFC2::Graph object
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
-  def ofc2_inline(width, height, graph, base='/', id=Time.now.usec)
+  def ofc2_inline(width, height, graph, base='/', id=Time.now.usec, swf_base='/')
     # TODO: generating more than one graph with ofc2_inline on the same page is currently impossible
     div_name = "flashcontent_#{id}"
     <<-EOF
@@ -67,7 +67,7 @@ module OFC2
         };
 
         swfobject.embedSWF(
-          '#{base}open-flash-chart.swf', '#{div_name}',
+          '#{swf_base}open-flash-chart.swf', '#{div_name}',
           '#{width}', '#{height}','9.0.0', 'expressInstall.swf',
           {'get-data':'#{div_name}_data'} );
 
@@ -81,13 +81,13 @@ module OFC2
   #  +url+ an url which return data in json format
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
-  def ofc2(width, height, url, base='/', id =Time.now.usec)
+  def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/')
     div_name = "flashcontent_#{id}"
     <<-EOF
       <div id='#{div_name}'></div>
       <script type="text/javascript">
         swfobject.embedSWF(
-        "#{base}open-flash-chart.swf","#{div_name}",
+        "#{swf_base}open-flash-chart.swf","#{div_name}",
         "#{width}", "#{height}", "9.0.0", "expressInstall.swf",
         {"data-file":"#{base}#{url}"} );
       </script>
