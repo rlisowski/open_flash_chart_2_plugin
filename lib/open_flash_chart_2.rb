@@ -47,7 +47,6 @@ module OFC2
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
   def ofc2_inline(width, height, graph, base='/', id=Time.now.usec, swf_base='/')
-    # TODO: generating more than one graph with ofc2_inline on the same page is currently impossible
     div_name = "flashcontent_#{id}"
     <<-EOF
       <div id="#{div_name}"></div>
@@ -78,10 +77,11 @@ module OFC2
   # generate a ofc object using data from url
   #  +width+ width for div
   #  +height+ height for div
-  #  +url+ an url which return data in json format
+  #  +url+ an url which return data in json format, if you use url_for method to set url param the base param must be set to '' (empty string)
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
   def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/')
+    url = CGI::escape(url)
     div_name = "flashcontent_#{id}"
     <<-EOF
       <div id='#{div_name}'></div>
