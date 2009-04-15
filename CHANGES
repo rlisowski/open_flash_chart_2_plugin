@@ -1,3 +1,8 @@
+[0.9] rc-1 : 15.04.2009
+  - remove to_json method from OWJSON module
+  - remove remove require 'json' from plugin
+  - migrate sample application to rails 2.3
+  - remove gem 'json' from enviroment.rb
 [0.8] rc-1 : 09.01.2009
   - add shape drawning support, example is here:
      http://openflashchart2.sentor.pl/chart_examples/mix_advanced_draw_shape
