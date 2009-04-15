@@ -1,17 +1,27 @@
-require 'json'
 module OFC2
   # specjal module included in each class
   # with that module we add to_hash and to_json methods
   # there is also a method_missing which allow user to set/get any instance variable
   # if user try to get not setted instance variable it return nil and generate a warn
   module OWJSON
+
+    # return a hash of instance values
     def to_hash
       self.instance_values
     end
     alias :to_h :to_hash
-    def to_json
+
+    # You can pass options to to_json method, but remember that they have no effects!!!
+    # argument 'options' is for rails compability
+    def to_json(options = {})
       to_hash.to_json
     end
+
+    # method_missing handle setting and getting instance variables
+    # You can set variable in two ways:
+    # 1. variable_name = value
+    # 1. set_variable_name(value)
+    # you can get only  alredy setted variables, otherwise warnig is logged and return nil
     def method_missing(method_id, *arguments)
       a = arguments[0] if arguments and arguments.size > 0
       method = method_id.to_s
@@ -36,6 +46,7 @@ module OFC2
     end
   end
 
+  # include methods to controller
   def self.included(controller)
     controller.helper_method(:ofc2, :ofc2_inline)
   end
@@ -44,8 +55,9 @@ module OFC2
   #  +width+ width for div
   #  +height+ height for div
   #  +graph+ a OFC2::Graph object
-  #  +base+ uri for graph, default '/'
+  #  +base+ uri for graph, default '/', not used in this method, go to ofc2 method for details
   #  +id+ id for div with graph, default Time.now.usec
+  #  +swf_base+ uri for swf file, default '/'
   def ofc2_inline(width, height, graph, base='/', id=Time.now.usec, swf_base='/')
     div_name = "flashcontent_#{id}"
     <<-EOF
@@ -80,6 +92,7 @@ module OFC2
   #  +url+ an url which return data in json format, if you use url_for method to set url param the base param must be set to '' (empty string)
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
+  #  +swf_base+ uri for swf file, default '/'
   def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/')
     url = CGI::escape(url)
     div_name = "flashcontent_#{id}"
