@@ -11,11 +11,13 @@ module OFC2
     end
     alias :to_h :to_hash
 
-    # You can pass options to to_json method, but remember that they have no effects!!!
-    # argument 'options' is for rails compability
-    def to_json(options = {})
-      to_hash.to_json
-    end
+    # if You use rails older that 2.3  probably  you have to uncomment that method and add require 'json' in enviroment.rb
+    # otherwise to_json method will not work propertly
+    #    # You can pass options to to_json method, but remember that they have no effects!!!
+    #    # argument 'options' is for rails compability
+    #    def to_json(options = {})
+    #      to_hash.to_json
+    #    end
 
     # method_missing handle setting and getting instance variables
     # You can set variable in two ways:

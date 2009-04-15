@@ -8,8 +8,11 @@ Visit the open flash chart project here - http://teethgrinder.co.uk/open-flash-c
 NOTE:
 sample application is using haml
   gem install haml
-plugin is using json
-  gem install json
+
+If You use rails older that 2.3  probably  you have to uncomment method to_json (vendor/plugins/open_flash_chart/lib/open_flash_chart.rb line 14)
+and add gem 'json' in enviroment.rb
+otherwise plugin will not work propertly
+
 
 Details
 =====================================
