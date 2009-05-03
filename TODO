@@ -2,7 +2,7 @@
   --generating more than one graph with ofc2_inline on the same page is currently impossible--
 
 ==Futures==
-  - add radar charts
+  --add radar charts--
   --add Tooltip class--
   --add DotValue class--
   --many inline chart on one page--

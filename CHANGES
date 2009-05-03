@@ -1,3 +1,10 @@
+[1.0] rc-2 : 03.05.2009
+  - moved to open-flash-chart-2-ichor version (http://teethgrinder.co.uk/open-flash-chart-2/downloads.php)
+  - initialize methods has changed !!!
+    now use a hash eg. OFC2::SomeClass.new(:option => value, :option2 => other_value)
+    I find it more readable that old way.
+  - add radar charts http://openflashchart2.sentor.pl/chart_examples/radar
+  - remove pseudo horizontal stacked bar example
 [0.9] rc-1 : 15.04.2009
   - remove to_json method from OWJSON module
   - remove remove require 'json' from plugin

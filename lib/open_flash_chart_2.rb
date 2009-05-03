@@ -1,17 +1,16 @@
 module OFC2
   # specjal module included in each class
-  # with that module we add to_hash and to_json methods
+  # with that module we add to_hash method
   # there is also a method_missing which allow user to set/get any instance variable
   # if user try to get not setted instance variable it return nil and generate a warn
   module OWJSON
-
     # return a hash of instance values
     def to_hash
       self.instance_values
     end
     alias :to_h :to_hash
 
-    # if You use rails older that 2.3  probably  you have to uncomment that method and add require 'json' in enviroment.rb
+    # if You use rails older that 2.3  probably  you have to uncomment that method and add "config.gem 'json'" in config/enviroment.rb file
     # otherwise to_json method will not work propertly
     #    # You can pass options to to_json method, but remember that they have no effects!!!
     #    # argument 'options' is for rails compability
@@ -31,11 +30,9 @@ module OFC2
         self.instance_variable_set("@#{$1.gsub('_','__')}", a)
       elsif method =~ /^(set_)(.*)$/
         self.instance_variable_set("@#{$2.gsub('_','__')}", a)
-      elsif self.instance_variable_defined?(method_id)
+      elsif self.instance_variable_defined?("@#{method_id.to_s.gsub('_','__')}")
         self.instance_variable_get("@#{method_id.to_s.gsub('_','__')}") # that will be return instance variable value or nil, handy
       else
-        #        well there is no instance variable and user don't wan't to define any
-        #         maybe better return nil and warn that rise exception(call super) ?
         warning = <<-EOF
           !!! there is no instance variable named #{method_id} !!!
           - if You want to set instance variable use variable= or set_variable(var) methods
@@ -53,14 +50,14 @@ module OFC2
     controller.helper_method(:ofc2, :ofc2_inline)
   end
 
-  # generate a ofc object using Graph object
+  # generate a ofc object using Graph object, it's more handy than ofc2 method
   #  +width+ width for div
   #  +height+ height for div
   #  +graph+ a OFC2::Graph object
   #  +base+ uri for graph, default '/', not used in this method, go to ofc2 method for details
   #  +id+ id for div with graph, default Time.now.usec
   #  +swf_base+ uri for swf file, default '/'
-  def ofc2_inline(width, height, graph, base='/', id=Time.now.usec, swf_base='/')
+  def ofc2_inline(width, height, graph, id=Time.now.usec, swf_base='/')
     div_name = "flashcontent_#{id}"
     <<-EOF
       <div id="#{div_name}"></div>
@@ -68,15 +65,6 @@ module OFC2
 
         function #{div_name}_data(){
           return '#{graph.render}';
-        };
-
-        // i'm not shure that is necessary
-        function findSWF(movieName) {
-          if (navigator.appName.indexOf("Microsoft")!= -1) {
-            return window[movieName];
-          } else {
-            return document[movieName];
-          }
         };
 
         swfobject.embedSWF(
@@ -109,194 +97,148 @@ module OFC2
     EOF
   end
 
-  # insance variables:
-  #
-  #  +style+ style for element, it's is in css style eg. "{font-size: 20px; color: #FF0F0F; text-align: center;}"
-  #  +text+ text for element
-  class Element
-    include OWJSON
-    # You can initialize Elemnt while creating it, otherwise it will be have default valiues
-    #  +text+ = ''
-    #  +css+ = "{font-size: 20px; color: #FF0F0F; text-align: center;}"
-    def initialize(text = '', css = "{font-size: 20px; color: #FF0F0F; text-align: center;}")
-      @text= text
-      @style= css
-    end
-  end
 
-  # documentation is the same as Element class
-  class XLegend <  Element ;end
-  # documentation is the same as Element class
-  class Title < Element ;end
-  # documentation is the same as Element class
-  class YLegend <  Element ;end
+  CLASSES = {
+    :dot =>{ :unavailable_variables => { :type => 'dot' } },
+    :solid_dot =>{ :unavailable_variables => { :type => 'solid-dot' } },
+    :hollow_dot =>{ :unavailable_variables => { :type => 'hollow-dot' } },
+    :star =>{ :unavailable_variables => { :type => 'star' } },
+    :bow => { :unavailable_variables => { :type => 'bow' } },
+    :anchor => { :unavailable_variables => { :type => 'anchor' } },
+    :title => { :available_variables => { :text => '', :style => "{font-size: 20px; color: #FF0F0F; text-align: center;}" } },
+    :line_style => { :available_variables => { :style => 'dash', :on => '', :off => '' } },
+    :line => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00' },
+      :unavailable_variables => { :type => "line" }
+    },
+    :area => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :fill => '#0000FF', :fill_alpha => 0.6, :loop => false},
+      :unavailable_variables => { :type => "area" }
+    },
+    :bar_stack_value => { :available_variables => { :value => 0, :colour => '#FF0000'} },
+    :bar_stack_key => { :available_variables => { :text => '', :colour => '#FF0000', :font_size => 12 } },
+    :bar_stack => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_stack" }
+    },
+    :h_bar_value => { :available_variables => { :left => 0, :right => nil} },
+    :h_bar => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00'},
+      :unavailable_variables => { :type => "hbar" }
+    },
+    :bar_value => { :available_variables => { :top => 0, :bottom => nil, :colour => '#FF0000', :tip => '#val#' } },
+    :bar => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar" },
+    },
+    :bar_cylinder_outline => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_cylinder_outline" },
+    },
+    :bar_cylinder => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_cylinder" },
+    },
+    :bar_filled => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6},
+      :unavailable_variables => { :type => "bar_filled" },
+    },
+    :bar_sketch => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6, :offset => 4 },
+      :unavailable_variables => { :type => "bar_sketch" },
+    },
+    :bar_glass => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_glass" },
+    },
+    :bar_round_glass => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_round_glass" },
+    },
+    :bar_round => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_round" },
+    },
+    :bar_dome => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_dome" },
+    },
+    :bar3d => {
+      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :unavailable_variables => { :type => "bar_3d" },
+    },
+    :pie_value => { },
+    :pie_fade => { :unavailable_variables => { :type => "fade" } },
+    :pie_bounce => {
+      :available_variables => { :distance => 5},
+      :unavailable_variables => { :type => "bounce" },
+    },
+    :pie => {
+      :available_variables => { :colours => [], :alpha => 0.6, :start_angle => 35, :tip => '#val#', :gradient_fill => false, :label_colour => '#0000FF', :no_labels => false, :on_click => ''},
+      :unavailable_variables => { :type => "pie" },
+    },
+    :y_axis => { },
+    :y_axis_right => { },
+    :y_legend => { :available_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :x_axis_label => { },
+    :x_axis_labels => { },
+    :x_axis => { },
+    :x_legend => { :available_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :tooltip => { },
+    :ofc_menu_item => {
+      :available_variables => { :text => '', :javascript_function => '' },
+      :unavailable_variables => { :type => 'text' },
+    },
+    :ofc_menu_item_camera => {
+      :available_variables => { :text => '', :javascript_function => '' },
+      :unavailable_variables => { :type => 'camera-icon' },
+    },
+    :ofc_menu => {
+      :available_variables => { :colour => '', :outline__colour => '' },
+      :unavailable_variables => { :type => 'camera-icon' },
+    },
+    :scatter_value => { :available_variables => { :x => 0, :y => 0} },
+    :scatter => {
+      :available_variables => { :text => 'label', :colour => '#FF0000' },
+      :unavailable_variables => { :type => 'scatter' },
+    },
+    :scatter_line => {
+      :available_variables => { :text => 'label', :colour => '#FF0000', :stepgraph => 'horizontal'},
+      :unavailable_variables => { :type => 'scatter_line' },
+    },
+    :shape_point => { :available_variables => { :x => 0, :y => 0} },
+    :shape => {
+      :available_variables => { :colour => '#FF0000'},
+      :unavailable_variables => { :type => 'shape' },
+    },
+    :radar_axis_labels => { :available_variables => { :labels => [], :colour => '#FAFFAF'} },
+    :radar_spoke_labels => { :available_variables => { :labels => [], :colour => '#FAFFAF'} },
+    :radar_axis => { }
+  }
 
-  # YAxisBase
-  #
-  #  +stroke+
-  #  +tick_length+
-  #  +colour+
-  #  +min+
-  #  +max+
-  #  +steps+
-  #  +labels+
-  class YAxisBase
-    include OWJSON
+  CLASSES.each_key do |class_name|
+    _class_name =class_name.to_s.camelize
+    new_class = Class.new do
+      include OWJSON
 
-    # set colour and grid_colour at once
-    # there is also an alias colours=
-    #
-    #  +colour+ colour for labels eg. #FF0000
-    #  +grid_colour+ colour for grid eg. #00FF00
-    def set_colours( colour, grid_colour )
-      set_colour( colour )
-      set_grid_colour( grid_colour )
-    end
-    alias_method :colours=, :set_colours
+      def initialize( opts = {})
+        class_data = CLASSES[self.class.name.demodulize.underscore.to_sym]
 
+        class_data[:available_variables].each do |name, value|
+          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+        end if class_data[:available_variables]
 
-    # set range at once
-    # there is also an alias range=
-    #
-    #  +min+ minimum for y_axis
-    #  +max+ maximum for y_axis
-    #  +steps+ how many steps skip before print label
-    def set_range( min, max, steps=1 )
-      set_min(min)
-      set_max(max)
-      set_steps( steps )
-    end
-    alias_method :range=, :set_range
+        opts.each do |name, value|
+          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+        end
 
-    # set offset for axis, these is handy when You want to 3d graph render
-    # there is also an alias offset=
-    def set_offset( off )
-      @offset = off ? 1 : 0
-    end
-    alias_method :offset=, :set_offset
-
-  end
-
-  class YAxis < YAxisBase
-    #    # left axis control grid colour, but right not
-    #    def set_grid_colour(color = '#ff0000')
-    #      @grid__colour = color
-    #    end
-    #    alias_method :grid_colour=, :set_grid_colour
-  end
-  class YAxisRight < YAxisBase
-  end
-
-  # x_axis
-  #
-  #  +stroke+
-  #  +tick_length+
-  #  +colour+
-  #  +tick_height+
-  #  +grid_colour+
-  #  +min+
-  #  +max+
-  #  +steps+
-  #  +labels+
-  #  +offset+
-  class XAxis
-    include OWJSON
-
-    # well it must be done this way because instance variable name can't be started by number
-    %w(3d).each do |method|
-      define_method("set_#{method}") do |a|
-        self.instance_variable_set("@___#{method}", a)
+        class_data[:unavailable_variables].each do |name, value|
+          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+        end if class_data[:unavailable_variables]
       end
-      define_method("_#{method}=") do |a|
-        self.instance_variable_set("@___#{method}", a)
-      end
-      define_method("#{method}") do
-        self.instance_variable_get("@___#{method}")
-      end
-    end
-    # set +colour+ and +grid_colour+, use a css color style '#ff00ff'
-    def set_colours( colour, grid_colour )
-      @colour= colour
-      @grid_colour= grid_colour
     end
 
-    # o is treat as a logic
-    def set_offset( o )
-      @offset = !!o
-    end
-
-    # helper method to make the examples simpler.
-    def set_labels_from_array( a )
-      x_axis_labels = XAxisLabels.new
-      x_axis_labels.set_labels( a )
-      x_axis_labels.set_steps( @steps ) if @steps
-      @labels = x_axis_labels
-    end
-    alias_method :labels_from_array=, :set_labels_from_array
-    def set_range( min, max )
-      @min=min
-      @max=max
-    end
-  end
-
-  #  +text+
-  #  +colour+
-  #  +size+
-  #  +rotate+
-  #  +visible+
-  class XAxisLabel
-    include OWJSON
-    def initialize( text = nil, colour = nil, size= nil)
-      @text= text if text
-      @colour= colour if colour
-      @size= size if size
-    end
-    def set_vertical
-      @rotate = "vertical"
-    end
-    alias_method :vertical, :set_vertical
-
-    def set_horizontal
-      @rotate = "horizontal"
-    end
-    alias_method :horizontal, :set_horizontal
-  end
-
-  #  +steps+
-  #  +labels+
-  #  +colour+
-  #  +size+
-  class XAxisLabels
-    include OWJSON
-    def set_vertical()
-      @rotate = "vertical"
-    end
-  end
-
-  # scatter value
-  #
-  #  +x+
-  #  +dot_size+
-  #  +y+
-  class ScatterValue
-    include OWJSON
-    def initialize( x, y, dot_size=-1 )
-      @x = x
-      @y = y
-      set_dot_size(dot_size) if dot_size > 0
-    end
-  end
-
-  #  +colour+
-  #  +dot_size+
-  #  +values+
-  class Scatter
-    include OWJSON
-    def initialize( colour, dot_size )
-      @type      = "scatter"
-      set_colour( colour )
-      set_dot_size( dot_size )
-    end
+    const_set(_class_name, new_class)
   end
 
 
@@ -314,7 +256,7 @@ module OFC2
 
     # it must be done in that way because method_missing method replace _ to __,
     # maybe I add seccond parameter to handle with that
-    %w(x_axis y_axis y_axis_right x_legend y_legend bg_colour).each do |method|
+    %w(radar_axis x_axis y_axis y_axis_right x_legend y_legend bg_colour).each do |method|
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@#{method}", a)
       end
@@ -338,323 +280,11 @@ module OFC2
 
     def render
       s = to_json
-      # everything about underscores
+      # about underscores
       s.gsub!('___','') # that is for @___3d variable
       s.gsub!('__','-') # that is for @smt__smt variables
       # variables @smt_smt should go without changes
       s
     end
   end
-
-  # line chart
-  #
-  #  +values+
-  #  +width+
-  #  +colour+
-  #  +font_size+
-  #  +dot_size+
-  #  +halo_size+
-  #  +text+
-  class LineBase
-    include OWJSON
-    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#0000FFs')
-      @type      = "line_dot"
-      @text      = text
-      @font__size = font_size
-      @values    = values
-      @colour    = colour
-    end
-  end
-
-
-  #  +value+
-  #  +colour+
-  #  +tip+
-  #  +size+
-  class DotValue
-    include OWJSON
-    def initialize(value = 0, colour = '', tip = nil)
-      @value = value
-      @colour = colour
-      @tip = tip if tip
-    end
-  end
-  # go to class LineBase for details
-  class LineDot < LineBase ;end
-
-  # go to class LineBase for details
-  class Line < LineBase
-    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#00FF00')
-      super
-      @type      = "line"
-    end
-  end
-
-  # go to class LineBase for details
-  class LineHollow < LineBase
-    def initialize(text = 'label text', font_size=10, values = [9,6,7,9,5,7,6,9,7], colour = '#FF0000')
-      super
-      @type      = "line_hollow"
-    end
-  end
-
-  #  +width+
-  #  +color+
-  #  +values+
-  #  +dot_size+
-  #  +text+
-  #  +font_size+
-  #  +fill_alpha+
-  class AreaHollow
-    include OWJSON
-    def initialize(fill_alpha = 0.35, values = [])
-      @type      = "area_hollow"
-      set_fill_alpha  fill_alpha
-      @values    = values
-    end
-  end
-
-  #  +alpha+
-  #  +colour+
-  #  +values+
-  #  +text+
-  #  +font_size+
-  class BarBase
-    include OWJSON
-    def initialize(values = [], text = '', size = 10)
-      @values = values
-      @text = text
-      @font__size = size
-    end
-    def set_key( text, size )
-      @text = text
-      @font__size = size
-    end
-    def append_value( v )
-      @values << v
-    end
-    alias_method :<<, :append_value
-  end
-
-  # go to class BarBase for details
-  class Bar < BarBase
-    def initialize(values = [], text = '', size = 10)
-      super
-      @type      = "bar"
-    end
-  end
-
-  #  +top+
-  #  +colour+
-  #  +tip+
-  class Value
-    include OWJSON
-    def initialize(top = 0, color = '', tip = nil)
-      @top = top
-      @colour = color
-      @tip = tip
-    end
-  end
-  class Bar3d < BarBase
-    def initialize(values = [], text = '', size = 10)
-      super
-      @type      = "bar_3d"
-    end
-  end
-
-  # go to class BarBase documentation for details
-  class BarGlass < BarBase
-    def initialize(values = [], text = '', size = 10)
-      super
-      @type      = "bar_glass"
-    end
-  end
-
-  # go to class BarBase documentation for details
-  #
-  #  +offset+
-  #  +colour+
-  #  +outline_colour+
-  class BarSketch < BarBase
-    def initialize( colour = '#ff0000', outline_colour = '#00FF00', fun_factor = 5)
-      @type      = "bar_sketch"
-      set_colour( colour )
-      set_outline_colour( outline_colour )
-      @offset = fun_factor
-    end
-  end
-
-  # go to class BarBase documentation for details
-  # +keys+
-  class BarStack < BarBase
-    include OWJSON
-    def initialize(values = [], text = '', size = 10, keys = [])
-      super(values, text, size)
-      @type      = "bar_stack"
-      @keys      = keys
-    end
-
-    def append_key( key )
-      @keys << key
-    end
-
-    def set_keys( keys )
-      @keys = keys
-    end
-    alias_method :keys=, :set_keys
-
-
-    def append_value( v )
-      @values << v
-    end
-    alias_method :append_stack, :append_value
-    alias_method :<<, :append_value
-  end
-
-  # go to class Value documentation for details
-  #
-  #  +val+
-  #  +colour+
-  class BarStackValue < Value
-    include OWJSON
-    def initialize(val, colour)
-      @val = val
-      @colour = colour
-    end
-  end
-
-  #  +colour+
-  #  +text+
-  #  +font_size+
-  class BarStackKey
-    include OWJSON
-    def initialize( colour, text, font_size )
-      @colour = colour
-      @text = text
-      @font__size = font_size
-    end
-  end
-
-
-  #  +left+
-  #  +right+
-  class HBarValue
-    include OWJSON
-    def initialize( left = 0, right = 0, tip = nil )
-      @left = left
-      @right = right
-      @tip = tip if tip
-    end
-  end
-
-  #  +colour+
-  #  +text+
-  #  +font_size+
-  #  +values+
-  class HBar
-    include OWJSON
-    def initialize(colour = "#9933CC", text = '', font_size = 10)
-      @type      = "hbar"
-      @colour    = colour
-      @text      = text
-      set_font_size font_size
-      @values    = []
-    end
-
-    # v suppostu be HBarValue class
-    def append_value( v )
-      @values << v
-    end
-    alias_method :<<, :append_value
-
-  end
-
-  # pie value
-  #  +value+
-  #  +text+
-  class PieValue
-    include OWJSON
-    def initialize( value, text )
-      @value  = value
-      @text   = text
-    end
-  end
-
-
-  #  +colours+
-  #  +alpha+
-  #  +border+
-  #  +values+
-  #  +animate+
-  #  +start_angle+
-  class Pie
-    include OWJSON
-    def initialize(colours = ["#d01f3c","#356aa0","#C79810"],
-        alpha = 0.6,
-        border = 2,
-        values = [2,3, PieValue.new(6.5, "hello (6.5)")]
-      )
-      @type     = 'pie'
-      @colours  = colours
-      @alpha	= alpha
-      @border	= border
-      @values	= values
-    end
-  end
-
-
-  # +shadow+
-  # +stroke+
-  # +colour+ text colour
-  # +background+ background colour
-  # +title+ title style
-  # +body+ body style
-  class Tooltip
-    include OWJSON
-
-    def set_title_style( style = '')
-      @title = style
-    end
-
-    def set_body_style( style = '')
-      @body = style
-    end
-
-    def set_proximity
-      @mouse = 1
-    end
-    alias_method :proximity, :set_proximity
-
-    def set_hover
-      @mouse = 2
-    end
-    alias_method :hover, :set_hover
-  end
-
-
-  class ShapePoint
-    include OWJSON
-
-    def initialize( x, y )
-      @x = x
-      @y = y
-    end
-  end
-
-  class Shape
-    include OWJSON
-    def initialize( colour = '', values = [] )
-      @type		= "shape"
-      @colour	= colour
-      @values	= values
-    end
-
-    def append_value( p )
-      @values << p
-    end
-    alias_method :<<, :append_value
-    alias_method :add_element, :append_value
-
-  end
-
 end
