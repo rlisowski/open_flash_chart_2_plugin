@@ -22,7 +22,7 @@ module OFC2
     # You can set variable in two ways:
     # 1. variable_name = value
     # 1. set_variable_name(value)
-    # you can get only  alredy setted variables, otherwise warnig is logged and return nil
+    # you can get only  alredy setted variables, otherwise return nil
     def method_missing(method_id, *arguments)
       a = arguments[0] if arguments and arguments.size > 0
       method = method_id.to_s
@@ -33,13 +33,6 @@ module OFC2
       elsif self.instance_variable_defined?("@#{method_id.to_s.gsub('_','__')}")
         self.instance_variable_get("@#{method_id.to_s.gsub('_','__')}") # that will be return instance variable value or nil, handy
       else
-        warning = <<-EOF
-          !!! there is no instance variable named #{method_id} !!!
-          - if You want to set instance variable use variable= or set_variable(var) methods
-          - if You want to get variable call object for variable: obj.variable
-          - You can call only for variables You set before
-        EOF
-        warn(warning)
         nil
       end
     end
@@ -180,6 +173,7 @@ module OFC2
     :y_axis => { },
     :y_axis_right => { },
     :y_legend => { :available_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :y2_legend => { :available_variables => { :text => "y2 legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
     :x_axis_label => { },
     :x_axis_labels => { },
     :x_axis => { },
@@ -256,7 +250,7 @@ module OFC2
 
     # it must be done in that way because method_missing method replace _ to __,
     # maybe I add seccond parameter to handle with that
-    %w(radar_axis x_axis y_axis y_axis_right x_legend y_legend bg_colour).each do |method|
+    %w(radar_axis x_axis y_axis y_axis_right x_legend y_legend y2_legend bg_colour).each do |method|
       define_method("set_#{method}") do |a|
         self.instance_variable_set("@#{method}", a)
       end
