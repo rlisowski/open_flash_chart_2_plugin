@@ -219,15 +219,18 @@ module OFC2
         class_data = CLASSES[self.class.name.demodulize.underscore.to_sym]
 
         class_data[:available_variables].each do |name, value|
-          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          #          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          self.send("#{name}=", value)
         end if class_data[:available_variables]
 
         opts.each do |name, value|
-          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          #          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          self.send("#{name}=", value)
         end
 
         class_data[:unavailable_variables].each do |name, value|
-          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          #          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
+          self.send("#{name}=", value)
         end if class_data[:unavailable_variables]
       end
     end
@@ -281,4 +284,6 @@ module OFC2
       s
     end
   end
+
+
 end
