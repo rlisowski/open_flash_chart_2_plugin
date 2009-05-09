@@ -265,9 +265,12 @@ module OFC2
       end
     end
 
-    def initialize
-      @title = Title.new( "Graph" )
+    def initialize(opts = {})
+      @title = Title.new(:text =>  "Graph" )
       @elements = []
+      opts.each do |name, value|
+        self.send("#{name}=", value)
+      end
     end
 
     def add_element( e )
