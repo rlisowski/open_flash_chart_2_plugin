@@ -98,115 +98,115 @@ module OFC2
     :star =>{ :unavailable_variables => { :type => 'star' } },
     :bow => { :unavailable_variables => { :type => 'bow' } },
     :anchor => { :unavailable_variables => { :type => 'anchor' } },
-    :title => { :available_variables => { :text => '', :style => "{font-size: 20px; color: #FF0F0F; text-align: center;}" } },
-    :line_style => { :available_variables => { :style => 'dash', :on => '', :off => '' } },
+    :title => { :default_variables => { :text => '', :style => "{font-size: 20px; color: #FF0F0F; text-align: center;}" } },
+    :line_style => { :default_variables => { :style => 'dash', :on => '', :off => '' } },
     :line => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00' },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00' },
       :unavailable_variables => { :type => "line" }
     },
     :area => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :fill => '#0000FF', :fill_alpha => 0.6, :loop => false},
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :fill => '#0000FF', :fill_alpha => 0.6, :loop => false},
       :unavailable_variables => { :type => "area" }
     },
-    :bar_stack_value => { :available_variables => { :value => 0, :colour => '#FF0000'} },
-    :bar_stack_key => { :available_variables => { :text => '', :colour => '#FF0000', :font_size => 12 } },
+    :bar_stack_value => { :default_variables => { :value => 0, :colour => '#FF0000'} },
+    :bar_stack_key => { :default_variables => { :text => '', :colour => '#FF0000', :font_size => 12 } },
     :bar_stack => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_stack" }
     },
-    :h_bar_value => { :available_variables => { :left => 0, :right => nil} },
+    :h_bar_value => { :default_variables => { :left => 0, :right => nil} },
     :h_bar => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00'},
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00'},
       :unavailable_variables => { :type => "hbar" }
     },
-    :bar_value => { :available_variables => { :top => 0, :bottom => nil, :colour => '#FF0000', :tip => '#val#' } },
+    :bar_value => { :default_variables => { :top => 0, :bottom => nil, :colour => '#FF0000', :tip => '#val#' } },
     :bar => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar" },
     },
     :bar_cylinder_outline => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_cylinder_outline" },
     },
     :bar_cylinder => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_cylinder" },
     },
     :bar_filled => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6},
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6},
       :unavailable_variables => { :type => "bar_filled" },
     },
     :bar_sketch => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6, :offset => 4 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :outline_colour => '#00FF00', :alpha => 0.6, :offset => 4 },
       :unavailable_variables => { :type => "bar_sketch" },
     },
     :bar_glass => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_glass" },
     },
     :bar_round_glass => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_round_glass" },
     },
     :bar_round => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_round" },
     },
     :bar_dome => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_dome" },
     },
     :bar3d => {
-      :available_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
+      :default_variables => { :text => 'label text', :font_size => 10, :colour => '#00FF00', :alpha => 0.6 },
       :unavailable_variables => { :type => "bar_3d" },
     },
     :pie_value => { },
     :pie_fade => { :unavailable_variables => { :type => "fade" } },
     :pie_bounce => {
-      :available_variables => { :distance => 5},
+      :default_variables => { :distance => 5},
       :unavailable_variables => { :type => "bounce" },
     },
     :pie => {
-      :available_variables => { :colours => [], :alpha => 0.6, :start_angle => 35, :tip => '#val#', :gradient_fill => false, :label_colour => '#0000FF', :no_labels => false, :on_click => ''},
+      :default_variables => { :colours => [], :alpha => 0.6, :start_angle => 35, :tip => '#val#', :gradient_fill => false, :label_colour => '#0000FF', :no_labels => false, :on_click => ''},
       :unavailable_variables => { :type => "pie" },
     },
     :y_axis => { },
     :y_axis_right => { },
-    :y_legend => { :available_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
-    :y2_legend => { :available_variables => { :text => "y2 legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :y_legend => { :default_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :y2_legend => { :default_variables => { :text => "y2 legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
     :x_axis_label => { },
     :x_axis_labels => { },
     :x_axis => { },
-    :x_legend => { :available_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :x_legend => { :default_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
     :tooltip => { },
     :ofc_menu_item => {
-      :available_variables => { :text => '', :javascript_function => '' },
+      :default_variables => { :text => '', :javascript_function => '' },
       :unavailable_variables => { :type => 'text' },
     },
     :ofc_menu_item_camera => {
-      :available_variables => { :text => '', :javascript_function => '' },
+      :default_variables => { :text => '', :javascript_function => '' },
       :unavailable_variables => { :type => 'camera-icon' },
     },
     :ofc_menu => {
-      :available_variables => { :colour => '', :outline__colour => '' },
+      :default_variables => { :colour => '', :outline__colour => '' },
       :unavailable_variables => { :type => 'camera-icon' },
     },
-    :scatter_value => { :available_variables => { :x => 0, :y => 0} },
+    :scatter_value => { :default_variables => { :x => 0, :y => 0} },
     :scatter => {
-      :available_variables => { :text => 'label', :colour => '#FF0000' },
+      :default_variables => { :text => 'label', :colour => '#FF0000' },
       :unavailable_variables => { :type => 'scatter' },
     },
     :scatter_line => {
-      :available_variables => { :text => 'label', :colour => '#FF0000', :stepgraph => 'horizontal'},
+      :default_variables => { :text => 'label', :colour => '#FF0000', :stepgraph => 'horizontal'},
       :unavailable_variables => { :type => 'scatter_line' },
     },
-    :shape_point => { :available_variables => { :x => 0, :y => 0} },
+    :shape_point => { :default_variables => { :x => 0, :y => 0} },
     :shape => {
-      :available_variables => { :colour => '#FF0000'},
+      :default_variables => { :colour => '#FF0000'},
       :unavailable_variables => { :type => 'shape' },
     },
-    :radar_axis_labels => { :available_variables => { :labels => [], :colour => '#FAFFAF'} },
-    :radar_spoke_labels => { :available_variables => { :labels => [], :colour => '#FAFFAF'} },
+    :radar_axis_labels => { :default_variables => { :labels => [], :colour => '#FAFFAF'} },
+    :radar_spoke_labels => { :default_variables => { :labels => [], :colour => '#FAFFAF'} },
     :radar_axis => { }
   }
 
@@ -218,10 +218,10 @@ module OFC2
       def initialize( opts = {})
         class_data = CLASSES[self.class.name.demodulize.underscore.to_sym]
 
-        class_data[:available_variables].each do |name, value|
+        class_data[:default_variables].each do |name, value|
           #          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
           self.send("#{name}=", value)
-        end if class_data[:available_variables]
+        end if class_data[:default_variables]
 
         opts.each do |name, value|
           #          self.instance_variable_set("@#{name.to_s.gsub('_','__')}", value)
