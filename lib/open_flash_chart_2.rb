@@ -50,7 +50,7 @@ module OFC2
   #  +base+ uri for graph, default '/', not used in this method, go to ofc2 method for details
   #  +id+ id for div with graph, default Time.now.usec
   #  +swf_base+ uri for swf file, default '/'
-  def ofc2_inline(width, height, graph, id=Time.now.usec, swf_base='/')
+  def ofc2_inline(width, height, graph, id=Time.now.usec, swf_base='/', flash_attributes = {}, flash_params = {})
     div_name = "flashcontent_#{id}"
     <<-EOF
       <div id="#{div_name}"></div>
@@ -63,7 +63,7 @@ module OFC2
         swfobject.embedSWF(
           '#{swf_base}open-flash-chart.swf', '#{div_name}',
           '#{width}', '#{height}','9.0.0', 'expressInstall.swf',
-          {'get-data':'#{div_name}_data'} );
+          {'get-data':'#{div_name}_data'}, {#{flash_params.to_json}}, {#{flash_attributes.to_json}} );
 
       </script>
     EOF
@@ -76,7 +76,7 @@ module OFC2
   #  +base+ uri for graph, default '/'
   #  +id+ id for div with graph, default Time.now.usec
   #  +swf_base+ uri for swf file, default '/'
-  def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/')
+  def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/', flash_attributes = {}, flash_params = {})
     url = CGI::escape(url)
     div_name = "flashcontent_#{id}"
     <<-EOF
@@ -85,7 +85,8 @@ module OFC2
         swfobject.embedSWF(
         "#{swf_base}open-flash-chart.swf","#{div_name}",
         "#{width}", "#{height}", "9.0.0", "expressInstall.swf",
-        {"data-file":"#{base}#{url}"} );
+        {"data-file":"#{base}#{url}"}, {#{flash_params.to_json}}, {#{flash_attributes.to_json}} );
+
       </script>
     EOF
   end
