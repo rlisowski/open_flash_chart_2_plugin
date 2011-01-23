@@ -93,6 +93,7 @@ module OFC2
 
 
   CLASSES = {
+    :animation =>{},
     :dot =>{ :unavailable_variables => { :type => 'dot' } },
     :solid_dot =>{ :unavailable_variables => { :type => 'solid-dot' } },
     :hollow_dot =>{ :unavailable_variables => { :type => 'hollow-dot' } },
