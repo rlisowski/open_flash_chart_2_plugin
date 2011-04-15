@@ -1,5 +1,5 @@
 namespace :open_flash_chart_2 do
-  PLUGIN_ROOT = File.dirname(__FILE__) + '/../'
+  PLUGIN_ROOT = File.dirname(__FILE__) + '/../../'
 
   desc 'Installs required swf in public/ and javascript files to the public/javascripts directory.'
   task :install do
