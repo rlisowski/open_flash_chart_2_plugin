@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Rafał Lisowski"]
   s.email       = ["lisukorin@gmail.com"]
   s.homepage    = "http://github.com/korin/open_flash_chart_2_plugin"
-  s.summary     = %q{open flash chart 2 plugin for rails applications}
+  s.summary     = %q{open flash chart 2 gem for rails applications}
   s.description = %q{This library was ported from the open flash chart project's php code to be used with Ruby on Rails.}
   s.license = 'MIT'
 
