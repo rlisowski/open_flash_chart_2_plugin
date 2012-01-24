@@ -1,0 +1,26 @@
+= About
+
+open flash chart 2 gem for rails applications
+
+This library was ported from the open flash chart project's php code to be used with Ruby on Rails.
+Visit the {open flash chart community project}[http://openflashchart.com/]
+
+== Note
+
+This gem is using swfobject.js to include swf file, go to
+{source}[https://github.com/korin/open_flash_chart_2_plugin/blob/master/lib/ofc2.rb#L82] to see how.
+
+Lates swfobject.js can be dowloaded {here}[http://code.google.com/p/swfobject/].
+
+= Details
+Go to {project home page}[http://openflashchart2.heroku.com/] for details
+
+= Help
+Looking for help?
+email to me: lisukorin [at] gmail [dot] com,
+  don't forget write 'open flash chart' in subject or my mail client will treat your message as spam.
+
+= License
+This project is available under MIT license, see {attached file}[https://github.com/korin/open_flash_chart_2_plugin/blob/master/LICENSE].
+
+
