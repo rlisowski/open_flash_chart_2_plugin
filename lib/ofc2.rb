@@ -1,5 +1,5 @@
-module OFC2
 
+module OFC2
   # specjal module included in each class
   # with that module we add to_hash method
   # there is also a method_missing which allow user to set/get any instance variable
@@ -39,8 +39,9 @@ module OFC2
     end
   end
 
-  class Engine < Rails::Engine
+  class Engine < ::Rails::Engine
     initializer "ofc2" do |app|
+      app.config.assets.paths << File.expand_path('../vendor/assets/flash', __FILE__)
       ActionController::Base.send :include, OFC2::InstanceMethods
     end
   end
@@ -50,10 +51,10 @@ module OFC2
     #  +width+ width for div
     #  +height+ height for div
     #  +graph+ a OFC2::Graph object
-    #  +base+ uri for graph, default '/', not used in this method, go to ofc2 method for details
     #  +id+ id for div with graph, default Time.now.usec
-    #  +swf_base+ uri for swf file, default '/'
-    def ofc2_inline(width, height, graph, id=Time.now.usec, swf_base='/', flash_attributes = {}, flash_params = {})
+    #  +flash_attributes+ attributes for swf
+    #  +flash_params+ params for swf
+    def ofc2_inline(width, height, graph, id=Time.now.usec, flash_attributes = {}, flash_params = {})
       div_name = "flashcontent_#{id}"
       <<-EOF
         <div id="#{div_name}"></div>
@@ -64,8 +65,8 @@ module OFC2
           };
 
           swfobject.embedSWF(
-            '#{swf_base}open-flash-chart.swf', '#{div_name}',
-            '#{width}', '#{height}','9.0.0', 'expressInstall.swf',
+            '/assets/open-flash-chart.swf', '#{div_name}',
+            '#{width}', '#{height}','9.0.0', '/assets/expressInstall.swf',
             {'get-data':'#{div_name}_data'}, #{flash_params.to_json}, #{flash_attributes.to_json} );
 
         </script>
@@ -76,19 +77,19 @@ module OFC2
     #  +width+ width for div
     #  +height+ height for div
     #  +url+ an url which return data in json format, if you use url_for method to set url param the base param must be set to '' (empty string)
-    #  +base+ uri for graph, default '/'
     #  +id+ id for div with graph, default Time.now.usec
-    #  +swf_base+ uri for swf file, default '/'
-    def ofc2(width, height, url, base='/', id =Time.now.usec, swf_base='/', flash_attributes = {}, flash_params = {})
+    #  +flash_attributes+ attributes for swf
+    #  +flash_params+ params for swf
+    def ofc2(width, height, url, id =Time.now.usec, flash_attributes = {}, flash_params = {})
       url = CGI::escape(url)
       div_name = "flashcontent_#{id}"
       <<-EOF
         <div id='#{div_name}'></div>
         <script type="text/javascript">
           swfobject.embedSWF(
-          "#{swf_base}open-flash-chart.swf","#{div_name}",
-          "#{width}", "#{height}", "9.0.0", "expressInstall.swf",
-          {"data-file":"#{base}#{url}"}, #{flash_params.to_json}, #{flash_attributes.to_json} );
+          "/assets/open-flash-chart.swf","#{div_name}",
+          "#{width}", "#{height}", "9.0.0", "/assets/expressInstall.swf",
+          {"data-file":"#{url}"}, #{flash_params.to_json}, #{flash_attributes.to_json} );
 
         </script>
       EOF
