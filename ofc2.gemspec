@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Rafał Lisowski"]
   s.email       = ["lisukorin@gmail.com"]
+  s.homepage    = "http://openflashchart2.herokuapp.com"
   s.homepage    = "http://github.com/korin/open_flash_chart_2_plugin"
   s.summary     = %q{open flash chart 2 gem for rails applications}
   s.description = %q{This library was ported from the open flash chart project's php code to be used with Ruby on Rails.}
