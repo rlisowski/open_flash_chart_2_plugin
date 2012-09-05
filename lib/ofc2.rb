@@ -181,6 +181,8 @@ module OFC2
     :y_axis_right => { },
     :y_legend => { :default_variables => { :text => "y legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
     :y2_legend => { :default_variables => { :text => "y2 legend", :style =>"{font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;}" } },
+    :y_axis_label => { },
+    :y_axis_labels => { },
     :x_axis_label => { },
     :x_axis_labels => { },
     :x_axis => { },
