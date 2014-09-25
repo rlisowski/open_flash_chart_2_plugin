@@ -13,7 +13,7 @@ This gem is using swfobject.js to include swf file, go to
 Lates swfobject.js can be dowloaded {here}[http://code.google.com/p/swfobject/].
 
 = Details / Usage
-Go to {project home page}[http://openflashchart2.heroku.com/] for details
+Go to {project home page}[http://openflashchart2.herokuapp.com/] for details
 
 = Help
 Looking for help?
