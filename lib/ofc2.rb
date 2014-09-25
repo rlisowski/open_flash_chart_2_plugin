@@ -42,6 +42,7 @@ module OFC2
   class Engine < ::Rails::Engine
     initializer "ofc2" do |app|
       app.config.assets.paths << File.expand_path('../vendor/assets/flash', __FILE__)
+      app.config.assets.precompile += %w(expressInstall.swf open-flash-chart.swf swfobject.js VERSION.txt)
       ActionController::Base.send :include, OFC2::InstanceMethods
     end
   end
